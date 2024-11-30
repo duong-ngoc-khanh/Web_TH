@@ -1,12 +1,21 @@
 <?php
 include 'db.php';
 
-$id = $_GET['id'];
-$sql = "DELETE FROM flowers WHERE id = $id";
-
-if ($conn->query($sql) === TRUE) {
-    header("Location: index.php");
+if (isset($_POST['id']) && !empty($_POST['id'])) {
+    $id = $_POST['id'];
+    $stmt = $conn->prepare("DELETE FROM flowers WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        echo "Xóa thành công!";
+        header("Location: admin.php");
+        exit;
+    } else {
+        echo "Lỗi: " . $stmt->error;
+    }
+    $stmt->close();
 } else {
-    echo "Lỗi: " . $conn->error;
+    echo "ID không hợp lệ.";
+    exit;
 }
+
 ?>

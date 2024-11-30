@@ -1,47 +1,50 @@
 <?php
 include 'db.php';
 
-$id = $_GET['id'];
-$sql = "SELECT * FROM flowers WHERE id = $id";
-$result = $conn->query($sql);
-$flower = $result->fetch_assoc();
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = $_POST['id'];
     $name = $_POST['name'];
     $description = $_POST['description'];
-    $image = $flower['image'];
 
-    if (!empty($_FILES['image']['name'])) {
-        $image = 'images/' . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], $image);
-    }
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $target_dir = 'images/';
+        $target_file = $target_dir . basename($_FILES['image']['name']);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
 
-    $sql = "UPDATE flowers SET name = '$name', description = '$description', image = '$image' WHERE id = $id";
-    if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        if (!in_array($imageFileType, $allowed_types)) {
+            die("Chỉ được tải lên các file JPG, JPEG, PNG, hoặc GIF.");
+        }
+
+        if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
+            die("File tải lên không được vượt quá 5MB.");
+        }
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+            $image = $target_file;
+
+            $stmt = $conn->prepare("UPDATE flowers SET name=?, description=?, image=? WHERE id=?");
+            $stmt->bind_param("sssi", $name, $description, $image, $id);
+            if ($stmt->execute()) {
+                header("Location: admin.php");
+                exit;
+            } else {
+                echo "Lỗi: " . $stmt->error;
+            }
+            
+        } else {
+            die("Không thể tải file lên. Vui lòng thử lại.");
+        }
     } else {
-        echo "Lỗi: " . $conn->error;
+        $stmt = $conn->prepare("UPDATE flowers SET name=?, description=?, image=? WHERE id=?");
+        $stmt->bind_param("sssi", $name, $description, $image, $id);
+        if ($stmt->execute()) {
+            header("Location: admin.php");
+            exit;
+        } else {
+            echo "Lỗi: " . $stmt->error;
+        }
+        
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa hoa</title>
-</head>
-<body>
-    <h1>Sửa hoa</h1>
-    <form action="edit.php?id=<?= $id ?>" method="POST" enctype="multipart/form-data">
-        <label for="name">Tên hoa:</label>
-        <input type="text" name="name" id="name" value="<?= $flower['name'] ?>" required><br>
-        <label for="description">Mô tả:</label>
-        <textarea name="description" id="description" required><?= $flower['description'] ?></textarea><br>
-        <label for="image">Hình ảnh:</label>
-        <input type="file" name="image" id="image"><br>
-        <button type="submit">Lưu</button>
-    </form>
-</body>
-</html>
