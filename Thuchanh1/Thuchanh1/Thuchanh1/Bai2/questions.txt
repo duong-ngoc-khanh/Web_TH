@@ -1,0 +1,41 @@
+Câu 1: Ngôn ngữ lập trình nào được dùng phổ biến để phát triển web?
+A. Python
+B. JavaScript
+C. C++
+D. Java
+Đáp án: B
+
+Câu 2: HTML là viết tắt của?
+A. Hyper Text Markup Language
+B. Hyperlinks and Text Markup Language
+C. Home Tool Markup Language
+D. None of the above
+Đáp án: A
+
+Câu 3: Thành phần nào sau đây KHÔNG phải là một thành phần giao diện người dùng (UI) trong Android
+A. TextView
+B. Button
+C. Service
+D. ImageView
+Đáp án: C
+
+Câu 4: Layout nào thường được sử dụng để sắp xếp các thành phần UI theo chiều dọc hoặc chiều ngang
+A. RelativeLayout
+B. LinearLayout
+C. FrameLayout
+D. Constraint Layout
+Đáp án: B
+
+Câu 5: Intent trong Android được sử dụng để làm gì?
+A. Hiển thị thông báo cho người dùng.
+B. Lưu trữ dữ liệu.
+C. Khởi chạy Activity.
+D. Xử lý sự kiện chạm.
+Đáp án: C
+
+Câu 6: Vòng đời của một Activity bắt đầu bằng phương thức nào?
+A. onStart()
+B. onResume()
+C. onCreate()
+D. onDestroy()
+Đáp án: A
